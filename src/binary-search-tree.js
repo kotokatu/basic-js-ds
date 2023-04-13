@@ -7,7 +7,6 @@ const { NotImplementedError } = require('../extensions/index.js');
 * using Node from extensions
 */
 class BinarySearchTree {
-
   constructor() {
     this.rootNode = null;
   }
@@ -53,11 +52,50 @@ class BinarySearchTree {
   }
 
   remove(data) {
+    this.rootNode = removeInner(this.rootNode, data);
+
+    function removeInner(node, data) {
+      if (!node) return null;
+
+      if (data < node.data) {
+        node.left = removeInner(node.left, data);
+        return node;
+      }
+
+      if (data > node.data) {
+        node.right = removeInner(node.right, data);
+        return node;
+      }
+
+      if (data === node.data) {
+        if (!node.left) {
+          node = node.right;
+          return node;
+        }
+        if (!node.right) {
+          node = node.left;
+          return node;
+        }
+        if (node.left && node.right) {
+          let min = node.right.data;
+          findMin(node.right)
+          function findMin(node) {
+            if (!node.left) min = node.data;
+            else findMin(node.left);
+          }
+          removeInner(node, min);
+          node.data = min;
+          return node;
+        }
+      }
+
+      return node;
+    }
   }
 
-  min() {
-    let min = this.rootNode.data;
-    findMin(this.rootNode);
+  min(node = this.rootNode) {
+    let min = node.data;
+    findMin(node);
     function findMin(node) {
       if (!node.left) min = node.data;
       else findMin(node.left);
@@ -65,9 +103,9 @@ class BinarySearchTree {
     return min;
   }
 
-  max() {
-    let max = this.rootNode.data;
-    findMax(this.rootNode);
+  max(node = this.rootNode) {
+    let max = node.data;
+    findMax(node);
     function findMax(node) {
       if (!node.right) max = node.data;
       else findMax(node.right);
@@ -76,6 +114,7 @@ class BinarySearchTree {
 
   }
 }
+
 
 module.exports = {
   BinarySearchTree
